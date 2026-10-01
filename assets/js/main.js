@@ -394,32 +394,10 @@
     var L = hilo ? hilo.getTotalLength() : 0;
     if (hilo) { hilo.style.strokeDasharray = L + ' ' + L; hilo.style.strokeDashoffset = L; }
     // El trazado va de la flecha (inicio) al cerebro (final): se dibuja desde el final hacia atrás.
-    // Límites medidos desde el arranque del trazo: fin del remolino (y>1420) y fin del ovillo (y>960).
-    var limites = [L / 3, 2 * L / 3, L];
-    if (hilo) {
-      var l1 = 0, l2 = 0, minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-      for (var l = 0; l <= L; l += 4) {
-        var q = hilo.getPointAtLength(l);
-        if (q.y > 1420) l1 = l;
-        if (q.y > 960) l2 = l;
-        if (q.x < minX) minX = q.x; if (q.x > maxX) maxX = q.x;
-        if (q.y < minY) minY = q.y; if (q.y > maxY) maxY = q.y;
-      }
-      // En móvil el lienzo es una franja apaisada: se recorta el viewBox al trazo real para que quede centrado
-      if (mq.matches && isFinite(minX)) {
-        var aire = 30;
-        hilo.ownerSVGElement.setAttribute('viewBox', (minX - aire) + ' ' + (minY - aire) + ' ' + (maxX - minX + aire * 2) + ' ' + (maxY - minY + aire * 2));
-        // Centro (en el eje largo, que girado es el horizontal) del tramo dibujado en cada paso
-        var centroTotal = (minY + maxY) / 2, altoVb = maxY - minY + aire * 2;
-        centrosPaso = limites.map(function (lim) {
-          var a = Infinity, b = -Infinity;
-          for (var s = Math.max(0, L - lim); s <= L; s += 4) { var pt = hilo.getPointAtLength(s); if (pt.y < a) a = pt.y; if (pt.y > b) b = pt.y; }
-          return { desvio: centroTotal - (a + b) / 2, altoVb: altoVb };
-        });
-      }
-      // en unidades "dibujadas desde el final": cerebro, luego ovillo, luego remolino y flecha
-      limites = [L - l2, L - l1, L];
-    }
+    // Límites de cada tramo en unidades "dibujadas desde el final" (cerebro, ovillo, remolino+flecha).
+    // Son fracciones fijas del trazado, medidas una vez: recorrer el path con getPointAtLength en cada carga
+    // costaba varios segundos de CPU en móvil y retrasaba el primer pintado.
+    var limites = [L * 0.5501, L * 0.8283, L];
     var dibujar = function (progreso) {
       if (!hilo) return;
       var g = Math.min(2, Math.floor(progreso * 3));
