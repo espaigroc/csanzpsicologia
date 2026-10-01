@@ -497,9 +497,10 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 }
 
 @media (max-width: 760px) {
-  /* Cabecera en móvil: logo a la izquierda y el botón del menú fijo a la derecha */
-  .cabecera { justify-content: flex-start; position: relative; padding-left: 10px; }
-  .menu__toggle { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); }
+  /* Cabecera en móvil: logo a la izquierda y botón del menú a la derecha, en flujo para que la píldora
+     crezca con él y el círculo del botón quede concéntrico con el borde redondeado (6 px de margen) */
+  .cabecera { justify-content: space-between; padding-left: 10px; }
+  .cabecera-fija.con-fondo .cabecera { padding: 6px 6px 6px 20px; }
   /* Nudo del cierre: a triple tamaño para que se aprecie el trazo; las colas horizontales quedan recortadas por la banda */
   .nudo { width: 300%; margin-left: -100%; }
   .menu { display: none; }
