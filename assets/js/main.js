@@ -44,16 +44,77 @@
     });
   }
 
-  // Preguntas frecuentes: solo una abierta a la vez
+  // Preguntas frecuentes: solo una abierta a la vez, y el contenido se despliega con animación
   var preguntas = document.querySelectorAll('.faq details');
+  var reduceMov = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   preguntas.forEach(function (d) {
-    d.addEventListener('toggle', function () {
-      if (!d.open) return;
-      preguntas.forEach(function (otra) {
-        if (otra !== d) otra.open = false;
-      });
+    var resumen = d.querySelector('summary');
+    var cuerpo = document.createElement('div');
+    cuerpo.className = 'faq__cuerpo';
+    Array.prototype.slice.call(d.children).forEach(function (h) { if (h !== resumen) cuerpo.appendChild(h); });
+    d.appendChild(cuerpo);
+    var animando = false;
+    var abrir = function () {
+      preguntas.forEach(function (otra) { if (otra !== d && otra.open) cerrar(otra); });
+      d.open = true;
+      if (reduceMov) return;
+      var alto = cuerpo.scrollHeight;
+      animando = true;
+      cuerpo.animate([{ height: '0px', opacity: 0 }, { height: alto + 'px', opacity: 1 }], { duration: 380, easing: 'cubic-bezier(.22,.61,.36,1)' })
+        .onfinish = function () { animando = false; };
+    };
+    var cerrar = function (det) {
+      var cu = det.querySelector('.faq__cuerpo');
+      if (reduceMov || !cu) { det.open = false; return; }
+      var alto = cu.scrollHeight;
+      cu.animate([{ height: alto + 'px', opacity: 1 }, { height: '0px', opacity: 0 }], { duration: 300, easing: 'ease' })
+        .onfinish = function () { det.open = false; };
+    };
+    resumen.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (animando) return;
+      if (d.open) cerrar(d); else abrir();
     });
   });
+
+  // Aparición suave de títulos y tarjetas al entrar en pantalla
+  var revelables = document.querySelectorAll(
+    'main .centrado, main .area, main .tarjeta, main .tarifa, main .datos-tarjetas li, main .paso, main .reserva__opcion, ' +
+    'main .faq details, main .proceso, main .espacio, main .sobre-intro > *, main .trayectoria__lado, main .legal'
+  );
+  if (revelables.length && !reduceMov && 'IntersectionObserver' in window) {
+    var obsRevela = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('visible'); obsRevela.unobserve(e.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    revelables.forEach(function (el) {
+      // Escalonado entre hermanos del mismo bloque, hasta 4
+      var idx = Array.prototype.indexOf.call(el.parentElement.children, el);
+      el.classList.add('revela');
+      el.setAttribute('data-retardo', String(Math.min(3, idx)));
+      obsRevela.observe(el);
+    });
+  }
+
+  // Botón flotante de reserva (móvil): visible tras el hero, oculto en el cierre y en bloques con elemento fijo propio
+  var ctaFlotante = document.querySelector('.cta-flotante');
+  if (ctaFlotante) {
+    var hero = document.querySelector('main > section');
+    var bloqueaCta = document.querySelectorAll('.cierre, .enfoque-scroll, .apilado, footer');
+    var ocultoPor = 0;
+    var pintarCta = function () {
+      var pasadoHero = hero ? hero.getBoundingClientRect().bottom < 80 : window.scrollY > 500;
+      ctaFlotante.classList.toggle('visible', pasadoHero && ocultoPor === 0);
+    };
+    if ('IntersectionObserver' in window && bloqueaCta.length) {
+      var obsCta = new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (e) { ocultoPor += e.isIntersecting ? 1 : -1; });
+        ocultoPor = Math.max(0, ocultoPor); pintarCta();
+      }, { threshold: 0.05 });
+      bloqueaCta.forEach(function (b) { obsCta.observe(b); });
+    }
+    window.addEventListener('scroll', pintarCta, { passive: true });
+    pintarCta();
+  }
 
   // Cita que se revela palabra a palabra al hacer scroll
   var cita = document.querySelector('.cita-reveal');
@@ -93,7 +154,13 @@
         if (mqPasos.matches) {
           // Móvil: línea vertical que llega hasta el punto de la lista que está al 60 % de la pantalla
           var linea = alto * 0.6;
-          var pv = (linea - r.top - 30) / (r.height - 60);
+          // La línea va del centro de la primera ficha al centro de la última
+          var f0 = listaPasos[0].querySelector('.ficha').getBoundingClientRect();
+          var fN = listaPasos[listaPasos.length - 1].querySelector('.ficha').getBoundingClientRect();
+          var inicio = f0.top + f0.height / 2 - r.top, fin = fN.top + fN.height / 2 - r.top;
+          bloquePasos.style.setProperty('--linea-inicio', Math.round(inicio) + 'px');
+          bloquePasos.style.setProperty('--linea-alto', Math.round(fin - inicio) + 'px');
+          var pv = (linea - r.top - inicio) / (fin - inicio);
           pv = Math.max(0, Math.min(1, pv));
           bloquePasos.style.setProperty('--progreso', pv.toFixed(3));
           listaPasos.forEach(function (p) {
@@ -141,7 +208,10 @@
         var alto = window.innerHeight;
         var progreso = (alto - r.top) / (alto * 0.42);
         progreso = Math.max(0, Math.min(1, progreso));
-        nudo.style.strokeDashoffset = (1 - progreso).toFixed(3);
+        // Al completarse se quita el dasharray: con el trazo escalado, el guion de longitud 1 se quedaba corto
+        // y la línea no llegaba al borde derecho
+        if (progreso >= 1) { nudo.style.strokeDasharray = 'none'; nudo.style.strokeDashoffset = 0; }
+        else { nudo.style.strokeDasharray = ''; nudo.style.strokeDashoffset = (1 - progreso).toFixed(3); }
       };
       window.addEventListener('scroll', trazarNudo, { passive: true });
       window.addEventListener('resize', trazarNudo);
@@ -273,6 +343,22 @@
         a.addEventListener('click', function () { mostrar(a.dataset.calIr); });
       });
     }
+  }
+
+  // Tarjetas apiladas (Terapia): en móvil cada tarjeta se fija a una altura que permita verla entera
+  var cartas = document.querySelectorAll('.apilado .carta');
+  if (cartas.length) {
+    var mqCartas = window.matchMedia('(max-width: 1000px)');
+    var ajustarCartas = function () {
+      if (!mqCartas.matches) { cartas.forEach(function (c) { c.style.removeProperty('--top-movil'); }); return; }
+      cartas.forEach(function (c, i) {
+        var top = Math.min(84 + i * 14, window.innerHeight - c.offsetHeight - 28);
+        c.style.setProperty('--top-movil', Math.round(top) + 'px');
+      });
+    };
+    window.addEventListener('resize', ajustarCartas);
+    window.addEventListener('load', ajustarCartas);
+    ajustarCartas();
   }
 
   // Tarjeta de formación: aparece al entrar en pantalla y tiene un parallax vertical suave

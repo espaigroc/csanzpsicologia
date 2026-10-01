@@ -30,7 +30,9 @@
   --h2:      clamp(28px, 3.2vw, 42px);
   --h3:      clamp(22px, 2.2vw, 28px);
   --lede:    clamp(17px, 1.5vw, 20px);
-  --body:    17px;
+  --body:    17px;              /* párrafos y listas de lectura */
+  --texto-sm: 15.5px;           /* texto dentro de tarjetas y listas compactas */
+  --dato:    clamp(20px, 1.6vw, 24px); /* cifras y datos destacados en serif */
 
   /* Espacio */
   --gutter: clamp(20px, 5vw, 72px);
@@ -300,14 +302,14 @@ p  { margin: 0; max-width: var(--medida); }
 /* ---------- Datos ---------- */
 .dato { display: flex; flex-direction: column; gap: 10px; }
 .dato dt { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--abeto-medio); }
-.dato dd { margin: 0; font-family: var(--serif); font-size: clamp(24px, 2.4vw, 34px); line-height: 1.18; }
+.dato dd { margin: 0; font-family: var(--serif); font-size: var(--dato); line-height: 1.18; }
 .dato--tarjeta {
   background: var(--blanco); border: 1px solid var(--arena); border-radius: var(--radio);
   padding: clamp(24px, 2.4vw, 32px) clamp(22px, 2.2vw, 28px); gap: 8px;
 }
 .dato--tarjeta .icono { margin-bottom: 6px; }
 .dato--tarjeta .icono svg { width: 36px; height: 36px; color: var(--terracota); }
-.dato--tarjeta dd { font-size: clamp(22px, 1.9vw, 27px); }
+.dato--tarjeta dd { font-size: var(--dato); }
 
 /* ---------- Chips ---------- */
 .chips { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -323,7 +325,7 @@ p  { margin: 0; max-width: var(--medida); }
 .pasos__hilo path { fill: none; stroke: var(--arena); stroke-width: 7px; stroke-linecap: round; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .35s ease-out; }
 .paso .ficha { position: relative; z-index: 1; }
 .paso { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px; }
-.paso h3 { font-family: var(--sans); font-size: 20px; font-weight: 600; }
+.paso h3 { font-family: var(--serif); font-size: clamp(20px, 1.7vw, 23px); font-weight: 400; line-height: 1.2; }
 .paso p { max-width: 34ch; }
 .pasos-banda .seccion { padding-top: calc(var(--band) * 0.5); }
 .pasos-banda .paso h3 { color: var(--tinta); }
@@ -337,7 +339,7 @@ p  { margin: 0; max-width: var(--medida); }
 }
 .datos-tarjetas li > svg { width: 34px; height: 34px; margin-bottom: 10px; fill: none; stroke: var(--terracota); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; color: var(--terracota); }
 .datos-tarjetas__etiqueta { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--abeto-medio); }
-.datos-tarjetas__valor { font-family: var(--serif); font-size: clamp(19px, 1.5vw, 22px); line-height: 1.25; color: var(--tinta); font-variation-settings: 'opsz' 96, 'SOFT' 50; }
+.datos-tarjetas__valor { font-family: var(--serif); font-size: var(--dato); line-height: 1.25; color: var(--tinta); font-variation-settings: 'opsz' 96, 'SOFT' 50; }
 .datos-tarjetas__enlace { margin-top: 10px; }
 .datos-tarjetas--tres { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 a.datos-tarjetas__valor:hover { color: var(--terracota); }
@@ -345,7 +347,7 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 
 /* ---------- Tarifas ---------- */
 .tarifas { width: 100%; border-collapse: collapse; }
-.tarifas caption { text-align: left; padding-bottom: 14px; color: var(--abeto-medio); font-size: 15px; }
+.tarifas caption { text-align: left; padding-bottom: 14px; color: var(--abeto-medio); font-size: var(--texto-sm); }
 .tarifas th, .tarifas td {
   text-align: left; padding: 18px 20px 18px 0;
   border-bottom: 1px solid var(--arena); vertical-align: baseline;
@@ -438,6 +440,7 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 }
 .pie__col { display: flex; flex-direction: column; gap: 14px; font-size: 15px; }
 .pie__red { display: inline-flex; align-items: center; gap: 10px; }
+.pie__sello { height: 72px; width: auto; align-self: flex-start; border-radius: 6px; margin-top: 10px; display: block; }
 .pie__red svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 .pie__marca img { width: 180px; }
 .pie__legal {
@@ -452,8 +455,13 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 .pie__urgencias strong { color: var(--crema); }
 
 /* ---------- Páginas legales ---------- */
-.legal { max-width: 760px; }
-.legal h2 { font-size: clamp(24px, 2.4vw, 30px); margin-top: 44px; }
+/* Páginas legales: mismo ancho que el resto de la web y menos aire entre cada título y su texto */
+.legal { max-width: none; gap: 14px; }
+.legal p, .legal .lede { max-width: none; }
+.legal li { max-width: none; }
+.legal h1 { font-size: clamp(36px, 5.2vw, 64px); margin-top: 6px; }
+.legal .lede { margin-bottom: 10px; }
+.legal h2 { font-size: clamp(24px, 2.4vw, 30px); margin-top: 30px; margin-bottom: 2px; }
 .legal p, .legal li { color: var(--texto); }
 .pendiente {
   background: var(--arena); border-radius: 12px; padding: 4px 10px;
@@ -489,8 +497,8 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 }
 
 @media (max-width: 760px) {
-  /* Cabecera en móvil: logo centrado y el botón del menú fijo a la derecha */
-  .cabecera { justify-content: center; position: relative; padding-left: 10px; }
+  /* Cabecera en móvil: logo a la izquierda y el botón del menú fijo a la derecha */
+  .cabecera { justify-content: flex-start; position: relative; padding-left: 10px; }
   .menu__toggle { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); }
   /* Nudo del cierre: a triple tamaño para que se aprecie el trazo; las colas horizontales quedan recortadas por la banda */
   .nudo { width: 300%; margin-left: -100%; }
@@ -508,9 +516,9 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
   /* Pasos en móvil: línea de tiempo vertical a la izquierda, número y título en la misma fila.
      La línea se va trazando con el scroll (--progreso lo pone el JS) y las fichas se encienden al pasar */
   .pasos { grid-template-columns: 1fr; gap: 32px; padding-left: 0; }
-  .pasos::before, .pasos::after { content: ""; position: absolute; left: 22px; top: 23px; width: 2px; border-radius: 2px; pointer-events: none; }
-  .pasos::before { bottom: 23px; background: var(--arena); }
-  .pasos::after { height: calc((100% - 46px) * var(--progreso, 0)); background: var(--terracota); transition: height .3s ease-out; }
+  .pasos::before, .pasos::after { content: ""; position: absolute; left: 22px; top: var(--linea-inicio, 23px); width: 2px; border-radius: 2px; pointer-events: none; }
+  .pasos::before { height: var(--linea-alto, calc(100% - 46px)); background: var(--arena); }
+  .pasos::after { height: calc(var(--linea-alto, calc(100% - 46px)) * var(--progreso, 0)); background: var(--terracota); transition: height .3s ease-out; }
   .paso { display: grid; grid-template-columns: 46px 1fr; column-gap: 16px; row-gap: 8px; align-items: center; text-align: left; }
   .paso .ficha { grid-row: 1 / span 2; align-self: start; width: 46px; height: 46px; font-size: 18px; transition: background .4s ease, color .4s ease; }
   .paso h3 { grid-column: 2; align-self: end; }
@@ -543,13 +551,13 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 
 /* Qué encontrarás en consulta */
 .espacio { display: flex; flex-direction: column; gap: 16px; padding-top: 8px; border-top: 1px solid var(--arena); padding-top: 26px; }
-.espacio h3 { font-size: clamp(22px, 2vw, 27px); }
-.espacio p { color: var(--texto); font-size: 16px; }
+.espacio h3 { font-size: var(--h3); }
+.espacio p { color: var(--texto); font-size: var(--texto-sm); }
 
 /* Áreas: tarjeta más compacta para rejilla de 4 */
 .tarjeta--compacta { padding: clamp(24px, 2.4vw, 32px) clamp(22px, 2.2vw, 28px); gap: 12px; }
-.tarjeta--compacta h3 { font-size: clamp(21px, 1.8vw, 25px); }
-.tarjeta--compacta p { font-size: 15px; line-height: 1.6; }
+.tarjeta--compacta h3 { font-size: var(--h3); }
+.tarjeta--compacta p { font-size: var(--texto-sm); line-height: 1.6; }
 
 /* Nombre destacado en el titular de Sobre mí */
 .nombre { font-style: italic; font-weight: 400; }
@@ -573,7 +581,7 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
   .sobre__credenciales { opacity: 1; transform: none; transition: none; }
 }
 .sobre__credenciales .lista { gap: 8px; }
-.sobre__credenciales .lista li { font-size: 14px; line-height: 1.45; }
+.sobre__credenciales .lista li { font-size: var(--texto-sm); line-height: 1.45; }
 .sobre__credenciales .lista li::before { top: 8px; }
 
 /* Iconos de línea en las tarjetas de áreas */
@@ -583,7 +591,7 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 /* Credenciales en el resumen de Sobre mí */
 .credenciales { border-top: 1px solid rgba(17, 29, 68, 0.14); padding-top: 22px; }
 .credenciales__titulo { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--abeto-medio); margin-bottom: 14px; font-weight: 600; }
-.credenciales .lista li { color: var(--tinta); font-size: 16px; }
+.credenciales .lista li { color: var(--tinta); font-size: var(--texto-sm); }
 
 /* Enfoque: acordeón que se abre y cierra con el scroll, con imagen fija a la derecha */
 .enfoque-scroll { height: 260vh; position: relative; }
@@ -597,7 +605,7 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 .enfoque__titulo { margin: 0; }
 .enfoque__titulo button {
   all: unset; cursor: pointer; display: flex; align-items: center; gap: 18px; width: 100%;
-  padding-block: 24px; font-family: var(--serif); font-size: clamp(26px, 2.6vw, 34px); line-height: 1.1;
+  padding-block: 24px; font-family: var(--serif); font-size: var(--h3); line-height: 1.1;
   color: var(--tinta); opacity: 0.4; transition: opacity .35s ease;
 }
 .enfoque__titulo button:focus-visible { outline: 3px solid var(--terracota); outline-offset: 4px; border-radius: 4px; }
@@ -617,7 +625,7 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 .enfoque__interior > p, .enfoque__interior > ul, .enfoque__interior > ol { margin-left: 62px; }
 .enfoque__interior .fases li { padding-left: 24px; }
 .enfoque__interior .fases li::before { content: ""; width: 8px; height: 8px; border-radius: 999px; background: var(--terracota); top: 18px; }
-.enfoque__interior p, .enfoque__interior li { font-size: 16px; }
+.enfoque__interior p, .enfoque__interior li { font-size: var(--body); }
 .enfoque__interior .fases li, .enfoque__interior .fases li:last-child { padding-block: 8px; border: 0; }
 .enfoque__mas { align-self: flex-start; margin-top: 28px; }
 .enfoque__lienzo {
@@ -720,7 +728,7 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
   margin-top: calc(48px - 19.31vw);
 }
 /* El párrafo arranca por debajo de la bajada del trazo (unos 5.5vw bajo la línea) y no llega al nudo */
-.terapia-hero__intro { position: relative; z-index: 1; max-width: min(480px, 38vw); font-size: 17px; line-height: 1.7; margin-top: calc(28px - 13.6vw); }
+.terapia-hero__intro { position: relative; z-index: 1; max-width: min(480px, 38vw); line-height: 1.7; margin-top: calc(28px - 13.6vw); }
 .terapia-hero__trazo {
   fill: none; stroke: url(#nudo-degradado); stroke-width: 32; stroke-linecap: square; stroke-linejoin: round;
   stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 1;
@@ -731,17 +739,17 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 @media (prefers-reduced-motion: reduce) { .terapia-hero__trazo { animation: none; stroke-dashoffset: 0; opacity: 1; } }
 .tarjeta--preguntas { margin-top: 24px; background: var(--terracota); color: var(--crema); }
 .tarjeta--preguntas .eyebrow { color: rgba(250, 248, 243, 0.78); }
-.tarjeta--preguntas .lista li { color: var(--crema); font-size: 18px; }
+.tarjeta--preguntas .lista li { color: var(--crema); font-size: var(--body); }
 .tarjeta--preguntas .lista li::before { background: var(--crema); opacity: 0.8; }
 .lista--dos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 40px; }
 .espacios .espacio { border-top: 0; padding-top: 0; }
 .espacios .ficha { margin-bottom: 4px; }
 .areas .area { background: var(--blanco); border: 1px solid var(--arena); border-radius: var(--radio); padding: clamp(24px, 2.4vw, 32px); display: grid; grid-template-columns: 40px 1fr; gap: 20px; align-items: start; }
 .area .icono { margin: 0; }
-.area h3 { font-size: clamp(21px, 1.8vw, 25px); margin-bottom: 8px; }
-.area p { color: var(--texto); font-size: 15.5px; line-height: 1.65; }
+.area h3 { font-size: var(--h3); margin-bottom: 8px; }
+.area p { color: var(--texto); font-size: var(--texto-sm); line-height: 1.65; }
 .pasos--cuatro { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.pasos--cuatro .paso h3 { font-size: 18px; }
+
 .modalidades { grid-template-columns: 1fr; }
 .modalidades .tarjeta { background: var(--blanco); border: 1px solid var(--arena); }
 .tarifas-rejilla { align-items: stretch; }
@@ -752,9 +760,9 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 }
 .tarifa__nombre { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--abeto-medio); }
 .tarifa__precio { font-family: var(--serif); font-size: clamp(40px, 4.2vw, 58px); line-height: 1; color: var(--tinta); font-variation-settings: 'opsz' 96, 'SOFT' 50; margin-top: 6px; }
-.tarifa__detalle { color: var(--texto); font-size: 15px; padding-bottom: 14px; border-bottom: 1px solid var(--arena); }
+.tarifa__detalle { color: var(--texto); font-size: var(--texto-sm); padding-bottom: 14px; border-bottom: 1px solid var(--arena); }
 .tarifa .lista { margin-top: 6px; gap: 10px; flex: 1; }
-.tarifa .lista li { font-size: 15px; }
+.tarifa .lista li { font-size: var(--texto-sm); }
 .tarifa .btn { margin-top: 18px; align-self: flex-start; }
 .tarifa--destacada { background: var(--tinta); border-color: var(--tinta); color: var(--crema); }
 .tarifa--destacada .tarifa__nombre { color: var(--terracota-clara); }
@@ -768,9 +776,12 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
   .terapia-hero { padding-bottom: 24px; overflow-x: clip; }
   .terapia-hero__titulo { max-width: 5ch; font-size: clamp(34px, 10.5vw, 44px); }
   .terapia-hero__nudo { left: auto; transform: none; width: 120vw; margin-left: calc(-8vw - 50px); margin-top: calc(10px - 23vw); }
-  .terapia-hero__intro { margin-top: 12px; max-width: none; }
+  .terapia-hero__intro { margin-top: 12px; max-width: 60%; }
   .lista--dos { grid-template-columns: 1fr; }
-  .areas .area { grid-template-columns: 32px 1fr; gap: 16px; }
+  /* Iconos de las áreas más pequeños y pegados al borde izquierdo de la tarjeta */
+  .areas .area { grid-template-columns: 28px 1fr; gap: 14px; }
+  .area .icono { margin-left: -6px; }
+  .area .icono svg { width: 30px; height: 30px; }
   .pasos--cuatro { grid-template-columns: 1fr; }
   .tarifas-rejilla { grid-template-columns: 1fr; }
 }
@@ -793,7 +804,7 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 .carta__cuerpo .eyebrow { margin-top: 6px; }
 .carta__texto { color: var(--texto); max-width: 60ch; }
 .carta__lista { gap: 10px 28px; }
-.carta__lista li { font-size: 15px; white-space: nowrap; }
+.carta__lista li { font-size: var(--texto-sm); white-space: nowrap; }
 .etiquetas { list-style: none; margin: 4px 0 6px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .etiquetas li { background: var(--tinta); color: var(--crema); font-size: 12.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 14px; border-radius: 999px; }
 .carta .btn { align-self: flex-start; margin-top: 14px; }
@@ -801,7 +812,12 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
   /* Etiquetas de perfiles más pequeñas para que ninguna se parta en dos líneas */
   .etiquetas { gap: 6px; }
   .etiquetas li { font-size: 10.5px; letter-spacing: 0.04em; padding: 7px 11px; white-space: nowrap; }
-  .carta { position: static; grid-template-columns: 1fr; min-height: 0; }
+  /* En móvil también se apilan. El JS calcula --top-movil: si la tarjeta es más alta que la pantalla,
+     se fija cuando su borde inferior llega abajo, para que siempre se pueda leer entera */
+  .carta { position: sticky; top: var(--top-movil, 84px); grid-template-columns: 1fr; min-height: 0; }
+  /* Hueco grande entre tarjetas: así cada una se queda fija un buen tramo de scroll antes de que la siguiente la tape */
+  .apilado { gap: 85vh; padding-bottom: 24px; }
+  .carta__cuerpo { padding-bottom: 40px; }
   .carta__foto { aspect-ratio: 4 / 3; }
   .carta__lista { grid-template-columns: 1fr; }
   .carta__lista li { white-space: normal; }
@@ -832,13 +848,13 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 .sobre-hero__texto { max-width: 820px; }
 .sobre-hero__titulo { font-size: var(--h1); }
 /* Foto panorámica: rectángulo con esquinas suaves, distinta del óvalo de la home */
-.foto-panoramica { overflow: hidden; border-radius: var(--radio); aspect-ratio: 21 / 9; margin-top: clamp(32px, 4vw, 56px); }
-.foto-panoramica img { width: 100%; height: 100%; object-fit: cover; object-position: 62% 38%; }
+.foto-panoramica { overflow: hidden; border-radius: var(--radio); aspect-ratio: 1.935 / 1; margin-top: clamp(32px, 4vw, 56px); }
+.foto-panoramica img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
 .sobre-intro { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: clamp(32px, 6vw, 96px); align-items: start; margin-top: clamp(36px, 4.5vw, 64px); }
 .sobre-intro .pila { gap: 18px; }
 .sobre-intro .enlace-flecha { margin-top: 8px; }
 .sobre-datos { margin: 0; display: grid; gap: 22px; padding-left: clamp(24px, 3vw, 40px); border-left: 1px solid rgba(17, 29, 68, 0.16); }
-.sobre-datos .dato dd { font-size: clamp(21px, 1.8vw, 26px); }
+.sobre-datos .dato dd { font-size: var(--dato); }
 
 /* Trayectoria: bloque de scroll. El lado izquierdo se queda fijo, cada hito ocupa media pantalla,
    el hilo recorre todo el bloque de arriba abajo y el hito activo se enciende al pasar por el centro */
@@ -882,11 +898,13 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 
 /* Formación */
 .tarjeta--borde { background: var(--blanco); border: 1px solid var(--arena); }
-.tarjeta--borde .lista { gap: 12px; }
+.tarjeta--borde .lista { gap: 10px; }
+.tarjeta--borde .lista li { font-size: var(--texto-sm); line-height: 1.6; }
+.tarjeta--borde .lista li::before { top: 9px; }
 /* Colegiación: banda arena a todo el ancho, más ligera que las tarjetas de formación */
 .colegiado {
   display: flex; align-items: center; gap: 16px; margin-top: 24px; color: var(--tinta); max-width: none; width: 100%;
-  background: var(--arena); border-radius: 14px; padding: 16px 22px; font-size: 15.5px;
+  background: var(--arena); border-radius: 14px; padding: 16px 22px; font-size: var(--texto-sm);
 }
 .colegiado__sello { flex-shrink: 0; width: 36px; height: 36px; border-radius: 999px; background: var(--crema); display: grid; place-items: center; }
 .colegiado__sello svg { width: 19px; height: 19px; fill: none; stroke: var(--terracota); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
@@ -906,9 +924,15 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
   .hito:last-child { padding-bottom: 0; }
 }
 @media (max-width: 760px) {
-  .sobre-hero__garabato { display: none; }
+  /* En móvil el garabato va justo después de la foto en el flujo: pequeño, pegado a la derecha y subido con margen
+     negativo para que su borde inferior quede 38 px por debajo del de la imagen, sin añadir altura al bloque */
+  .sobre-hero__garabato {
+    position: relative; display: block; top: auto; right: auto; z-index: 1;
+    width: 30vw; --garabato-alto: calc(30vw * 703 / 571);
+    margin: calc(-1 * var(--garabato-alto) + 38px) -12px -38px auto;
+  }
   .foto-panoramica { aspect-ratio: 4 / 3; }
-  .foto-panoramica img { object-position: 68% 40%; }
+  .foto-panoramica img { object-position: 62% 50%; }
   .sobre-datos { grid-template-columns: 1fr; gap: 18px; }
   .colegiado { align-items: flex-start; }
 }
@@ -928,6 +952,54 @@ a.datos-tarjetas__valor:hover { color: var(--terracota); }
 .contacto-cabecera > section:first-of-type { padding-bottom: clamp(28px, 3.5vw, 48px); }
 .reserva__opcion { position: relative; }
 @media (max-width: 760px) {
-  .contacto-cabecera__garabato { width: 200%; top: auto; bottom: 40px; }
+  /* En móvil el garabato crece más allá del ancho de pantalla y se queda tras el titular y las primeras tarjetas */
+  .contacto-cabecera__garabato { width: 190vw; max-width: none; top: 120px; }
   .contacto-cabecera .reserva { margin-top: 24px; }
 }
+
+/* Hero de Terapia en teléfono: párrafo a todo el ancho, un punto más pequeño y más pegado al nudo */
+@media (max-width: 700px) {
+  .terapia-hero__intro { max-width: none; line-height: 1.65; margin-top: 16px; }
+  /* El nudo baja 10px respecto al título; la segunda frase del párrafo solo se muestra en escritorio */
+  .terapia-hero__nudo { margin-top: calc(20px - 23vw); margin-bottom: 0; }
+  .terapia-hero__intro .solo-escritorio { display: none; }
+}
+
+/* Bloque "El objetivo de la terapia": más verde por debajo de la cita */
+.objetivo-cuerpo { padding-bottom: calc(var(--band) + 24px); }
+@media (max-width: 760px) { .objetivo-cuerpo { padding-bottom: calc(var(--band) + 40px); } }
+
+/* =========================================================
+   Pulido final: aparición al hacer scroll, FAQ animado, hover en tarjetas y CTA flotante en móvil
+   ========================================================= */
+
+/* 1. Aparición suave de bloques (la clase .revela la pone el JS; .visible al entrar en pantalla) */
+.revela { opacity: 0; transform: translateY(14px); transition: opacity .65s ease, transform .65s cubic-bezier(.22,.61,.36,1); }
+.revela.visible { opacity: 1; transform: none; }
+.revela[data-retardo="1"] { transition-delay: .08s; }
+.revela[data-retardo="2"] { transition-delay: .16s; }
+.revela[data-retardo="3"] { transition-delay: .24s; }
+@media (prefers-reduced-motion: reduce) { .revela { opacity: 1; transform: none; transition: none; } }
+
+/* 2. FAQ: el contenido se despliega con altura animada (el JS envuelve el contenido en .faq__cuerpo) */
+.faq__cuerpo { overflow: hidden; }
+.faq details > .faq__cuerpo > p { padding-bottom: 24px; color: var(--texto); }
+
+/* 3. Hover en tarjetas, solo con ratón */
+@media (hover: hover) {
+  .area, .tarjeta--borde, .tarjeta--compacta, .tarifa, .datos-tarjetas li, .reserva__opcion, .tarjeta--preguntas {
+    transition: transform .3s cubic-bezier(.22,.61,.36,1), box-shadow .3s ease;
+  }
+  .area:hover, .tarjeta--borde:hover, .tarjeta--compacta:hover, .tarifa:hover, .datos-tarjetas li:hover, .reserva__opcion:hover, .tarjeta--preguntas:hover {
+    transform: translateY(-4px); box-shadow: 0 22px 44px -26px rgba(17, 29, 68, 0.35);
+  }
+}
+
+/* 4. Botón flotante de reserva en móvil: aparece al pasar el hero y se esconde en el cierre y en bloques con su propio elemento fijo */
+.cta-flotante {
+  display: none; position: fixed; left: 50%; bottom: 16px; z-index: 60; transform: translate(-50%, 24px);
+  opacity: 0; pointer-events: none; transition: opacity .3s ease, transform .3s ease;
+  box-shadow: 0 16px 36px -14px rgba(17, 29, 68, 0.45);
+}
+.cta-flotante.visible { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+@media (max-width: 760px) { .cta-flotante { display: inline-flex; width: auto; padding-inline: 28px; white-space: nowrap; } }
