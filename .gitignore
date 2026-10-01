@@ -1,0 +1,15 @@
+# Sistema y herramientas
+.DS_Store
+.claude/
+
+# Fotos originales y material sin usar en la web (se quedan en local, no se publican)
+assets/img/20260515*.jpg
+assets/img/avance-brain*
+assets/img/hilo-cerebro.svg
+assets/img/enfoque-*.jpg
+assets/img/carlos-mesa.jpg
+assets/img/carlos-tablet.jpg
+assets/img/cerebro-crema.png
+assets/img/icono-crema.png
+assets/img/marca-crema.png
+assets/img/consulta-planta.jpg
